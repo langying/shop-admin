@@ -1,0 +1,45 @@
+server:
+  port: 8181
+spring:
+  profiles: prod
+  redis:
+    host: 127.0.0.1
+    database: 0
+    password: 
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.mariadb.jdbc.Driver
+    druid:
+      masterDataSource:  #主库数据源
+        url: jdbc:mariadb://127.0.0.1:3306/jinliangcang?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
+        password: HHXdl9wUAlektjyQPhzbV7FruytwROQ
+      slaveDataSource:  #从库数据源
+        url: jdbc:mariadb://127.0.0.1:3306/jinliangcang?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+        username: root
+        password: HHXdl9wUAlektjyQPhzbV7FruytwROQ
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        #login-username: admin
+        #login-password: admin
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('渠道表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+	            <td class="formTitle">渠道名称<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="渠道名称" v-model="tChannel.name" isvalid="yes" checkexpession="NotNull">
+	            </td>
+				<td class="formTitle">公司名称<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="渠道名称" v-model="tChannel.company" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+
+        	</tr>
+
+			<tr>
+				<td class="formTitle">渠道帐号<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="帐号" v-model="tChannel.account" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+				<td class="formTitle">密码<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control"  v-model="tChannel.password" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">渠道类型<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tChannel.channelType" class="form-control" >
+
+						<option v-for="option in channels" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+				<td class="formTitle">联系人<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="联系人" v-model="tChannel.contact" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+
+			</tr>
+
+
+
+			<tr>
+
+				<td class="formTitle">职务<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="职务" v-model="tChannel.position" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">联系电话<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="联系电话" v-model="tChannel.phone" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+
+			<tr>
+				<td class="formTitle">付款方式<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tChannel.payType" class="form-control" >
+
+						<option v-for="option in pays" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+
+				<td class="formTitle">结算方式<font face="宋体">*</font></td>
+				<td>
+					<select v-model="tChannel.settlementType" class="form-control" >
+
+						<option v-for="option in settlements" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">合作方式<font face="宋体">*</font></td>
+				<td>
+				<select v-model="tChannel.cooperationType" class="form-control" >
+
+					<option v-for="option in cooperations" v-bind:value="option.value">
+						{{ option.text }}
+					</option>
+				</select>
+				</td>
+
+				<td class="formTitle">公司地址<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="公司地址" v-model="tChannel.address" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">渠道信息<font face="宋体">*</font></td>
+				<td class="formValue">
+
+					<textarea   style="width:100%;height:120px;" v-model="tChannel.content" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+
+				<td class="formTitle">我司对接人<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="我司对接人" v-model="tChannel.userName" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+
+			<tr>
+
+				<td class="formTitle">收款账号<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="收款账号" v-model="tChannel.payment" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">状态</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="status" value="0" v-model="tChannel.status"/> 上线
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="status" value="1" v-model="tChannel.status"/> 下线
+					</label>
+				</td>
+			</tr>
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/channel/add.js}"></script>
+</body>
+</html>

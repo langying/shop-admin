@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TProductBrowseMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TProductBrowseEntity">
+		SELECT
+			a.`id`,
+			a.`user_id`,
+			a.`product_id`,
+			a.`days`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			b.name
+		FROM
+			t_product_browse a left join t_product b on a.product_id=b.id
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.gmt_create, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND b.`name` LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_product_browse (
+			`user_id`, 
+			`product_id`, 
+			`days`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		)
+		VALUES (
+			#{userId}, 
+			#{productId}, 
+			#{days}, 
+			#{gmtCreate}, 
+			#{createBy}, 
+			#{gmtModified}, 
+			#{updateBy}, 
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TProductBrowseEntity">
+		SELECT
+			`id`, 
+			`user_id`, 
+			`product_id`, 
+			`days`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_product_browse
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_product_browse
+	 	<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_product_browse
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

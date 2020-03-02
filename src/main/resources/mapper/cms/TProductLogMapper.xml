@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TProductLogMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TProductLogEntity">
+	SELECT
+	a.`id`,
+	a.`product_id`,
+	a.`product_name`,
+	a.`price`,
+	a.`days`,
+	a.`pv`,
+	a.`uv`,
+	a.`earnings`,
+	a.`income`,
+	a.`registrations`,
+	a.`gmt_create`,
+	a.`create_by`,
+	a.`gmt_modified`,
+	a.`update_by`,
+	a.`del_flag`,
+	b.content
+	FROM
+	t_product_log a left join t_product b on a.product_id=b.id
+	<where>
+		<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+			AND DATE_FORMAT( a.days, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+		</if>
+		<if test="name != null and name.trim() != ''">
+			AND a.product_name LIKE concat('%',#{name},'%')
+		</if>
+	</where>
+	    <if test="orderNo==1">
+		    order by a.`registrations` desc,id desc
+	    </if>
+		<if test="orderNo==2">
+			order by a.`registrations` ,id desc
+		</if>
+		<if test="orderNo==3">
+			order by a.`earnings` desc,id desc
+		</if>
+		<if test="orderNo==4">
+			order by a.`earnings` ,id desc
+		</if>
+	</select>
+
+
+	<select id="listPage" resultType="net.chenlin.dp.modules.cms.entity.TProductLogEntity">
+		SELECT
+		a.`id`,
+		a.`product_id`,
+		a.`product_name`,
+		c.`name` as merchantsName,
+		a.`price`,
+		a.`days`,
+		b.`cooperation_type`,
+		a.`income`,
+		a.`up_payment`,
+		a.res_payment,
+		a.`gmt_create`,
+		a.`create_by`,
+		a.`gmt_modified`,
+		a.`update_by`,
+		a.`del_flag`
+		FROM
+		t_product_log a left join t_product b on a.product_id=b.id left join t_merchants c on b.merchants_id=c.id
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.days, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND ( a.product_name LIKE concat('%',#{name},'%') or  c.name LIKE concat('%',#{name},'%') )
+			</if>
+		</where>
+
+		ORDER BY
+		id DESC
+	</select>
+
+	<select id="realList" resultType="net.chenlin.dp.modules.cms.entity.TProductLogEntity">
+SELECT
+    a.product_id AS productId,
+    b.name AS productName,
+    b.content,
+    b.price,
+    COUNT(1)                  AS pv,
+    COUNT(DISTINCT a.user_id) AS uv
+FROM
+    t_apply_record a
+    LEFT JOIN t_product b
+        ON a.product_id=b.id
+WHERE
+    TO_DAYS(a.gmt_create)=TO_DAYS(now())
+<if test="name != null and name.trim() != ''">
+    AND b.name LIKE CONCAT('%', #{name}, '%')
+</if>
+GROUP BY a.product_id
+ORDER BY b.id DESC
+	</select>
+
+
+	<select id="recordList" resultType="net.chenlin.dp.modules.cms.entity.TProductLogEntity">
+SELECT
+    a.product_id AS productId,
+    b.name       AS productName,
+    c.id         AS merchantsId,
+    c.name       AS merchantsName,
+    c.wallet,
+    b.price,
+    COUNT(1)                  AS pv,
+    COUNT(DISTINCT a.user_id) AS uv
+FROM
+    t_apply_record a
+    LEFT JOIN t_product b
+        ON a.product_id=b.id
+    LEFT JOIN t_merchants c
+        ON b.merchants_id=c.id
+WHERE
+    TO_DAYS(a.gmt_create)=TO_DAYS(#{days})
+GROUP BY a.product_id
+ORDER BY pv DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_product_log (
+			`product_id`,
+			`product_name`,
+			`price`,
+			`days`, 
+			`pv`, 
+			`uv`, 
+			`earnings`, 
+			`income`, 
+			`registrations`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		)
+		VALUES (
+			#{productId},
+			#{productName},
+			#{price},
+			#{days}, 
+			#{pv}, 
+			#{uv}, 
+			#{earnings}, 
+			#{income}, 
+			#{registrations}, 
+			now(),
+			#{createBy}, 
+			#{gmtModified}, 
+			#{updateBy}, 
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TProductLogEntity">
+		SELECT
+			a.`id`,
+			a.`product_id`,
+			a.`product_name`,
+			c.`name` as merchantsName,
+		    c.id as  merchantsId,
+			a.`price`,
+			a.`days`,
+			a.`pv`,
+			a.`uv`,
+			a.`earnings`,
+			a.`income`,
+			a.`up_payment`,
+			a.res_payment,
+			a.`registrations`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`
+		FROM
+			t_product_log a left join t_product b on a.product_id=b.id left join t_merchants c on b.merchants_id=c.id
+		WHERE
+			a.id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_product_log
+	 	<set>
+			`gmt_modified` = now(),
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="pv != null">`pv` = #{pv}, </if>
+			<if test="uv != null">`uv` = #{uv}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="earnings != null">`earnings` = #{earnings}, </if>
+			<if test="income != null">`income` = #{income}, </if>
+			<if test="registrations != null">`registrations` = #{registrations}, </if>
+		    <if test="upPayment!=null">up_payment=#{upPayment},</if>
+			<if test="resPayment!=null">res_payment=#{resPayment},</if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_product_log
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

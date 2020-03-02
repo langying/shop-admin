@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TEarningsMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TEarningsEntity">
+		SELECT
+			`id`, 
+			`days`, 
+			`income`, 
+			`real_cost`, 
+			`profit`,
+		    `inter_rate`,
+			`gmt_create`
+		FROM
+			t_earnings
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( days, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+
+		</where>
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_earnings (
+			`days`, 
+			`income`, 
+			`real_cost`, 
+			`profit`,
+			 inter_rate,
+			`gmt_create`
+		)
+		VALUES (
+			#{days}, 
+			#{income}, 
+			#{realCost}, 
+			#{profit},
+		    #{interRate},
+			now()
+		)
+	</insert>
+
+
+
+	<select id="findByDays" resultType="net.chenlin.dp.modules.cms.entity.TEarningsEntity">
+		SELECT
+		`id`,
+		`days`,
+		`income`,
+		`real_cost`,
+		`profit`,
+		inter_rate,
+		`gmt_create`
+		FROM
+		t_earnings
+		WHERE
+		days = #{days}
+	</select>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TEarningsEntity">
+		SELECT
+			`id`, 
+			`days`, 
+			`income`, 
+			`real_cost`, 
+			`profit`,
+			inter_rate,
+			`gmt_create`
+		FROM
+			t_earnings
+		WHERE
+			id = #{id}
+	</select>
+
+
+	<select id="getDays" resultType="net.chenlin.dp.modules.cms.entity.TEarningsEntity">
+		 select (select sum(income) as income from t_product_log where TO_DAYS(days)=TO_DAYS(#{days}) ) as income,
+        (select sum(real_cost) as realCost from t_agent_log where TO_DAYS(days)=TO_DAYS(#{days})) as real_cost
+        from t_earnings limit 1
+
+	</select>
+	
+	<update id="update">
+		UPDATE t_earnings
+	 	<set>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="income != null">`income` = #{income}, </if>
+			<if test="realCost != null">`real_cost` = #{realCost}, </if>
+			<if test="profit != null">`profit` = #{profit}, </if>
+			<if test="interRate != null">`inter_rate` = #{interRate}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_earnings
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TAdvertMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TAdvertEntity">
+		SELECT
+			a.`id`,
+			a.`title`,
+			a.`cover_url`,
+			a.`product_id`,
+			a.`type`,
+			a.`link_url`,
+			a.`status`,
+			a.`click_total`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			b.name
+		FROM
+			t_advert a left join t_product b on a.product_id=b.id
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_advert (
+			`title`, 
+			`cover_url`, 
+			`product_id`, 
+			`type`, 
+			`link_url`, 
+			`status`, 
+			`click_total`, 
+			`gmt_create`,
+			`del_flag`
+		)
+		VALUES (
+			#{title}, 
+			#{coverUrl}, 
+			#{productId}, 
+			#{type}, 
+			#{linkUrl}, 
+			#{status}, 
+			#{clickTotal}, 
+			now(),
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TAdvertEntity">
+		SELECT
+			`id`, 
+			`title`, 
+			`cover_url`, 
+			`product_id`, 
+			`type`, 
+			`link_url`, 
+			`status`, 
+			`click_total`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_advert
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_advert
+	 	<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="coverUrl != null">`cover_url` = #{coverUrl}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="linkUrl != null">`link_url` = #{linkUrl}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="clickTotal != null">`click_total` = #{clickTotal}, </if>
+			<if test="gmtModified != null">`gmt_modified` = now(), </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_advert
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

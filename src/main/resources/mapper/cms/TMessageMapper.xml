@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TMessageMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TMessageEntity">
+		SELECT
+			a.`id`,
+			a.`id` as messageId,
+			a.`title`,
+			a.`content`,
+			a.`type`,
+			a.`product_id`,
+			a.`link_url`,
+			a.`channel`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			b.name
+		FROM
+			t_message a left join t_product b on a.product_id=b.id
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_message (
+			`title`, 
+			`content`, 
+			`type`, 
+			`product_id`, 
+			`link_url`, 
+			`channel`, 
+			`gmt_create`, 
+			`create_by`,
+			`del_flag`
+		)
+		VALUES (
+			#{title}, 
+			#{content}, 
+			#{type}, 
+			#{productId}, 
+			#{linkUrl}, 
+			#{channel}, 
+			now(),
+			#{createBy},
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TMessageEntity">
+		SELECT
+			`id`,
+			`id` as messageId,
+			`title`, 
+			`content`, 
+			`type`, 
+			`product_id`, 
+			`link_url`, 
+			`channel`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_message
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_message
+	 	<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="linkUrl != null">`link_url` = #{linkUrl}, </if>
+			<if test="channel != null">`channel` = #{channel}, </if>
+			<if test="gmtModified != null">`gmt_modified` = now(), </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_message
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

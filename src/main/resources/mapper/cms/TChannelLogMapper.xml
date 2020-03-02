@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TChannelLogMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TChannelLogEntity">
+		SELECT
+			a.`id`,
+			a.`channel_id`,
+			a.`price`,
+			a.`days`,
+			a.`settle_number`,
+			a.`real_cost`,
+			a.`gmt_create`,
+		    b.name as channelName,
+		    b.company,
+		    b.user_name as userName
+		FROM
+			t_channel_log a left join t_channel b on a.channel_id=b.id
+
+		<where>
+
+			<if test="name != null and name.trim() != ''">
+				AND b.name LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+		ORDER BY
+			id DESC
+	</select>
+
+	<select id="taskMonth" resultType="net.chenlin.dp.modules.cms.entity.TChannelLogEntity">
+		select c.channel_id,date_format(now(),'%Y-%m') as days,b.name as channelName,b.company,avg(a.price) as price,SUM(a.settle_number) as settleNumber,SUM(a.real_cost) as realCost,b.user_name
+		from t_agent_log a  left join t_channel_agent c on a.agent_id=c.id left join t_channel b on c.channel_id=b.id
+		where days >=#{startDate} and days &lt;=#{endDate} group by b.id
+
+	</select>
+
+	<select id="getByDays" resultType="net.chenlin.dp.modules.cms.entity.TChannelLogEntity">
+           select
+                  a.`id`,
+				  a.`channel_id`,
+				  a.`price`,
+				  a.`days`,
+				  a.`settle_number`,
+				  a.`real_cost`,
+				  a.`gmt_create`
+                  from t_channel_log  a where a.days=#{days} and a.channel_id=#{channelId}
+
+	</select>
+
+	
+	<insert id="save" >
+		INSERT INTO t_channel_log (
+			`channel_id`, 
+			`price`, 
+			`days`, 
+			`settle_number`, 
+			`real_cost`, 
+			`gmt_create`
+		)
+		VALUES (
+			#{channelId}, 
+			#{price}, 
+			#{days}, 
+			#{settleNumber}, 
+			#{realCost}, 
+			now()
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TChannelLogEntity">
+		SELECT
+			`id`, 
+			`channel_id`, 
+			`price`, 
+			`days`, 
+			`settle_number`, 
+			`real_cost`, 
+			`gmt_create`
+		FROM
+			t_channel_log
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_channel_log
+	 	<set>
+			<if test="channelId != null">`channel_id` = #{channelId}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="settleNumber != null">`settle_number` = #{settleNumber}, </if>
+			<if test="realCost != null">`real_cost` = #{realCost}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_channel_log
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('第三方链接')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+	            <td class="formTitle">链接名称<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="第三方名称" v-model="tThird.name" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+			<tr>
+				<td class="formTitle">链接类型：</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="type" value="1"  v-model="tThird.type"/> 平台产品
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="type" value="2" v-model="tThird.type"/> 推广链接
+					</label>
+				</td>
+			</tr>
+			<tr v-if="tThird.type == 1">
+				<td class="formTitle">平台产品<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="产品id" v-model="tThird.productId" isvalid="yes" checkexpession="NotNull">-->
+
+
+					<select v-model="tThird.productId" class="form-control" >
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr v-if="tThird.type == 2">
+				<td class="formTitle">推广链接<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="地址" v-model="tThird.linkUrl" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+
+			<tr>
+	            <td class="formTitle">推广码</td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="不填，随机生成5位数" v-model="tThird.code" >
+	            </td>
+        	</tr>
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/third/add.js}"></script>
+</body>
+</html>

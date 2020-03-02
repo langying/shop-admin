@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TPromoteMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TPromoteEntity">
+		SELECT
+			a.`id`,
+			a.`name`,
+			a.`describe`,
+			a.`img_url`,
+			a.`type`,
+			a.`column_id`,
+			a.`product_id`,
+			a.`order_num`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			b.name as productName,
+			c.name as columnName
+		FROM
+			t_promote a left join t_product b on a.product_id=b.id left join t_column c on a.column_id=c.id
+		ORDER BY
+			a.order_num
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_promote (
+			`name`, 
+			`describe`, 
+			`img_url`, 
+			`type`, 
+			`column_id`, 
+			`product_id`,
+			`order_num`, 
+			`gmt_create`
+		)
+		VALUES (
+			#{name}, 
+			#{describe}, 
+			#{imgUrl}, 
+			#{type}, 
+			#{columnId}, 
+			#{productId},
+			#{orderNum}, 
+			now()
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TPromoteEntity">
+		SELECT
+			a.`id`,
+			a.`name`,
+			a.`describe`,
+			a.`img_url`,
+			a.`type`,
+			a.`column_id`,
+			a.`product_id`,
+			a.`order_num`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			b.name as productName,
+			c.name as columnName
+		FROM
+			t_promote a left join t_product b on a.product_id=b.id left join t_column c on a.column_id=c.id
+		WHERE
+			a.id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_promote
+	 	<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="describe != null">`describe` = #{describe}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="columnId != null">`column_id` = #{columnId}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_promote
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

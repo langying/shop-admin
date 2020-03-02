@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TProductColumnMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TProductColumnEntity">
+		SELECT
+			`id`, 
+			`product_id`, 
+			`column_id`, 
+			`order_num`
+		FROM
+			t_product_column
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_product_column (
+			`product_id`, 
+			`column_id`, 
+			`order_num`
+		)
+		VALUES (
+			#{productId}, 
+			#{columnId}, 
+			#{orderNum}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TProductColumnEntity">
+		SELECT
+			`id`, 
+			`product_id`, 
+			`column_id`, 
+			`order_num`
+		FROM
+			t_product_column
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_product_column
+	 	<set>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="columnId != null">`column_id` = #{columnId}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_product_column
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

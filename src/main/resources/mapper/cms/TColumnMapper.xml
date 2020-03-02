@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TColumnMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TColumnEntity">
+		SELECT
+			`id`, 
+			`title`, 
+			`name`, 
+			`img_url`, 
+			`describe`, 
+			`amount_scope`, 
+			`status`, 
+			`type`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_column
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_column (
+			`title`, 
+			`name`, 
+			`img_url`, 
+			`describe`, 
+			`amount_scope`, 
+			`status`, 
+			`type`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		)
+		VALUES (
+			#{title}, 
+			#{name}, 
+			#{imgUrl}, 
+			#{describe}, 
+			#{amountScope}, 
+			#{status}, 
+			#{type}, 
+			now(),
+			#{createBy}, 
+			#{gmtModified}, 
+			#{updateBy}, 
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TColumnEntity">
+		SELECT
+			`id`, 
+			`title`, 
+			`name`, 
+			`img_url`, 
+			`describe`, 
+			`amount_scope`, 
+			`status`, 
+			`type`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_column
+		WHERE
+			id = #{id}
+	</select>
+
+	<select id="selectAll" resultType="net.chenlin.dp.modules.cms.entity.TSelectEntity">
+		select t.name as text,t.id as value from t_column t
+
+		where t.status=0 and t.del_flag=0 order by gmt_create desc limit 999
+
+
+	</select>
+	
+	<update id="update">
+		UPDATE t_column
+	 	<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="describe != null">`describe` = #{describe}, </if>
+			<if test="amountScope != null">`amount_scope` = #{amountScope}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_column
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('渠道的代理(推广)表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+
+				<td class="formTitle">选择渠道<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tChannelAgent.channelId" class="form-control">
+
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+				<td class="formTitle">单价<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="0.0" v-model="tChannelAgent.price" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">帐号<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="帐号" v-model="tChannelAgent.account" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">密码<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="密码" v-model="tChannelAgent.password" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">扣量系数<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="1.0" v-model="tChannelAgent.discount" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">初始扣量数<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="20" v-model="tChannelAgent.initNumber" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">推广地址<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tChannelAgent.linkId" class="form-control" >
+
+						<option v-for="option in links" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+				<td class="formTitle">结算方式<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tChannelAgent.payType"payType class="form-control" >
+
+						<option v-for="option in pays" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">详细信息<font face="宋体">*</font></td>
+				<td class="formValue">
+
+
+					<textarea   style="width:100%;height:80px;" v-model="tChannelAgent.content" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+				<td class="formTitle">我司对接人员<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="我司对接人员" v-model="tChannelAgent.userName" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">状态</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="status" value="0" v-model="tChannelAgent.status"/> 上线
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="status" value="1" v-model="tChannelAgent.status"/> 下线
+					</label>
+				</td>
+			</tr>
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/channelAgent/add.js}"></script>
+</body>
+</html>

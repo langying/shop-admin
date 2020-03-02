@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TMerchantsMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TMerchantsEntity">
+		SELECT
+			`id`, 
+			`name`, 
+			`company`,
+			`contact`,
+			`phone`,
+			`settlement_type`,
+			`pay_type`,
+			`content`,
+			`wallet`,
+			`status`,
+			`user_name`,
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_merchants
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_merchants (
+			`name`,
+			`company`,
+			`contact`,
+			`phone`,
+			`settlement_type`,
+			`pay_type`,
+			`content`,
+			`status`,
+			`user_name`,
+			`gmt_create`,
+			`create_by`
+		)
+		VALUES (
+			#{name}, 
+			#{company},
+			#{contact},
+			#{phone},
+			#{settlementType},
+			#{payType},
+			#{content},
+			#{status},
+			#{userName},
+			now(),
+			#{createBy}
+		)
+	</insert>
+
+	<select id="selectAll" resultType="net.chenlin.dp.modules.cms.entity.TSelectEntity">
+		select t.name as text,t.id as value from t_merchants t
+
+		where t.status=0 and t.del_flag=0 order by gmt_create desc limit 999
+
+
+	</select>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TMerchantsEntity">
+		SELECT
+			`id`, 
+			`name`, 
+			`company`,
+			`contact`,
+			`phone`,
+			`settlement_type`,
+			`pay_type`,
+			`content`,
+			`status`,
+			`user_name`,
+			`wallet`,
+           `gmt_create`,
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_merchants
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_merchants
+	 	<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="company != null">`company` = #{company}, </if>
+			<if test="contact != null">`contact` = #{contact}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="settlementType != null">`settlement_type` = #{settlementType}, </if>
+			<if test="payType != null">`pay_type` = #{payType}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+		    <if test="wallet!=null">`wallet`=#{wallet},</if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_merchants
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

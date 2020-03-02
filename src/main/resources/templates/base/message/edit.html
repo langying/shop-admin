@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('消息推送表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+				<td class="formTitle">通知标题<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="通知标题" v-model="tMessage.title" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">通知内容<font face="宋体">*</font></td>
+				<td class="formValue">
+					<textarea  style="width:100%;height:120px;" v-model="tMessage.content" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">跳转类型：</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="type" value="1"  v-model="tMessage.type"/> 平台详情
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="type" value="2" v-model="tMessage.type"/> 第三方链接
+					</label>
+				</td>
+			</tr>
+
+			<tr v-if="tMessage.type == 1">
+				<td class="formTitle">平台产品<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="产品id" v-model="tMessage.productId" isvalid="yes" checkexpession="NotNull">-->
+
+					<select v-model="tMessage.productId" class="form-control">
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr v-if="tMessage.type == 2">
+				<td class="formTitle">跳转链接<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="链接地址" v-model="tMessage.linkUrl" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="formTitle">推送渠道</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="channel" value="" v-model="tMessage.channel"/> 无
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="channel" value="android" v-model="tMessage.channel"/> 安卓
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="channel" value="ios" v-model="tMessage.channel"/> 苹果
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="channel" value="all" v-model="tMessage.channel"/> 所有
+					</label>
+				</td>
+			</tr>
+
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/message/edit.js}"></script>
+</body>
+</html>

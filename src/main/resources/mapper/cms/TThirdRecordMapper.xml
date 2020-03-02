@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TThirdRecordMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TThirdRecordEntity">
+		select a.third_id as id,b.name,count(1) as pv,count(distinct a.ip_addr) as uv from
+		t_third_apply a left join t_third b
+		                on a.third_id=b.id where a.gmt_create
+                        and TO_DAYS(a.gmt_create )=TO_DAYS(now())
+                        group by a.third_id order by pv desc
+	</select>
+
+
+	<select id="list" resultType="net.chenlin.dp.modules.cms.entity.TThirdRecordEntity">
+		select b.id ,a.pv,a.uv,a.days,b.name from t_third_record a left join t_third b
+		on a.third_id=b.id order by pv desc
+	</select>
+
+	<select id="recordList" resultType="net.chenlin.dp.modules.cms.entity.TThirdRecordEntity">
+		select a.third_id as id,b.name,count(1) as pv,count(distinct a.ip_addr) as uv from
+		t_third_apply a left join t_third b
+		on a.third_id=b.id where  TO_DAYS(a.gmt_create )=TO_DAYS(#{days})
+		group by a.third_id order by pv desc
+	</select>
+
+
+	
+	<insert id="save">
+		INSERT INTO t_third_record (
+			`third_id`, 
+			`days`, 
+			`uv`, 
+			`pv`, 
+			`gmt_create`
+		)
+		VALUES (
+			#{id},
+			#{days}, 
+			#{uv}, 
+			#{pv}, 
+			now()
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TThirdRecordEntity">
+		SELECT
+			`id`, 
+			`third_id`, 
+			`days`, 
+			`uv`, 
+			`pv`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_third_record
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_third_record
+	 	<set>
+			<if test="thirdId != null">`third_id` = #{thirdId}, </if>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="uv != null">`uv` = #{uv}, </if>
+			<if test="pv != null">`pv` = #{pv}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_third_record
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

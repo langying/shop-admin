@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TNewsMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TNewsEntity">
+		SELECT
+			`id`, 
+			`name`, 
+			`title`, 
+			`img_url`, 
+			`browse_num`, 
+			`content`, 
+			`status`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_news
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_news (
+			`name`, 
+			`title`, 
+			`img_url`, 
+			`browse_num`, 
+			`content`, 
+			`status`, 
+			`gmt_create`
+		)
+		VALUES (
+			#{name}, 
+			#{title}, 
+			#{imgUrl}, 
+			#{browseNum}, 
+			#{content}, 
+			#{status}, 
+			now()
+
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TNewsEntity">
+		SELECT
+			`id`, 
+			`name`, 
+			`title`, 
+			`img_url`, 
+			`browse_num`, 
+			`content`, 
+			`status`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_news
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_news
+	 	<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="browseNum != null">`browse_num` = #{browseNum}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_news
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TChannelAgentMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TChannelAgentEntity">
+		SELECT
+			a.`id`,
+			a.`channel_id`,
+			a.link_id,
+			a.`code`,
+			a.`name`,
+			a.`pay_type`,
+			a.`link_url`,
+			a.mirror_url,
+			a.`content`,
+			a.price,
+			a.`status`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			a.`account`,
+			a.`password`,
+			a.`user_name`,
+			a.discount,
+			a.init_number,
+			b.name as channelName
+		FROM
+			t_channel_agent a left join t_channel b on a.channel_id=b.id
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.gmt_create, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND b.`name` LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_channel_agent (
+			`channel_id`,
+			link_id,
+			`code`, 
+			`name`, 
+			`account`,
+			`password`,
+			`pay_type`,
+			`mirror_url`,
+			`link_url`,
+			`content`,
+			discount,
+			init_number,
+			`price`,
+			`status`,
+			`user_name`,
+			`gmt_create`,
+			`create_by`,
+			`gmt_modified`,
+			`update_by`
+
+		)
+		VALUES (
+			#{channelId},
+			#{linkId},
+			#{code},
+			#{name},
+			#{account},
+			#{password},
+			#{payType},
+			#{mirrorUrl},
+			#{linkUrl},
+			#{content},
+			#{discount},
+			#{initNumber},
+			#{price},
+			#{status},
+			#{userName},
+			now(),
+			#{createBy}, 
+			#{gmtModified}, 
+			#{updateBy}
+		)
+	</insert>
+
+	<select id="getNum" resultType="java.lang.Integer">
+		select count(1) from t_channel_agent
+		where channel_id=#{channelId} and status=0 and del_flag=0
+
+	</select>
+
+
+	<select id="findByAccount" resultType="net.chenlin.dp.modules.cms.entity.TChannelAgentEntity">
+		SELECT
+			`id`,
+			`channel_id`,
+			link_id,
+			`code`,
+			`name`,
+			`account`,
+			`password`,
+			`pay_type`,
+			`mirror_url`,
+			`link_url`,
+			`content`,
+			discount,
+			init_number,
+			`price`,
+			`status`,
+			`user_name`,
+			`gmt_create`,
+			`create_by`,
+			`gmt_modified`,
+			`update_by`,
+			`del_flag`
+		FROM
+			t_channel_agent
+		WHERE
+			account = #{account}
+
+	</select>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TChannelAgentEntity">
+		SELECT
+			`id`, 
+			`channel_id`,
+			link_id,
+			`code`, 
+			`name`, 
+			`account`,
+			`password`,
+			`pay_type`,
+			`mirror_url`,
+			discount,
+			init_number,
+			`link_url`,
+			`content`,
+			`price`,
+			`status`,
+			`user_name`,
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_channel_agent
+		WHERE
+			id = #{id}
+	</select>
+
+
+	
+	<update id="update">
+		UPDATE t_channel_agent
+		<set>
+			<if test="channelId != null">`channel_id` = #{channelId}, </if>
+			<if test="linkId != null">`link_id` = #{linkId}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="account != null">`account` = #{account}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="payType != null">`pay_type` = #{payType}, </if>
+			<if test="mirrorUrl != null">`mirror_url` = #{mirrorUrl}, </if>
+			<if test="linkUrl != null">`link_url` = #{linkUrl}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="discount != null">`discount` = #{discount}, </if>
+			<if test="initNumber != null">`init_number` = #{initNumber}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+		id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_channel_agent
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

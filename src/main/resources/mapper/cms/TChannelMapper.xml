@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TChannelMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TChannelEntity">
+		SELECT
+			`id`, 
+			`account`, 
+			`password`, 
+			`name`,
+		    company,
+			`contact`, 
+			`phone`, 
+			`position`, 
+			`payment`, 
+			`status`, 
+			`channel_type`, 
+			`pay_type`, 
+			`settlement_type`, 
+			`cooperation_type`, 
+			`address`, 
+			`content`, 
+			`user_name`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_channel
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( gmt_create, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND `name` LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+
+		ORDER BY
+			id DESC
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_channel (
+			`account`, 
+			`password`, 
+			`name`,
+			company,
+			`contact`, 
+			`phone`, 
+			`position`, 
+			`payment`, 
+			`status`, 
+			`channel_type`, 
+			`pay_type`, 
+			`settlement_type`, 
+			`cooperation_type`, 
+			`address`, 
+			`content`, 
+			`user_name`, 
+			`gmt_create`
+
+		)
+		VALUES (
+			#{account}, 
+			#{password}, 
+			#{name},
+		    #{company},
+			#{contact}, 
+			#{phone}, 
+			#{position}, 
+			#{payment}, 
+			#{status}, 
+			#{channelType}, 
+			#{payType}, 
+			#{settlementType}, 
+			#{cooperationType}, 
+			#{address}, 
+			#{content}, 
+			#{userName},
+			now()
+
+		)
+	</insert>
+
+	<select id="selectAll" resultType="net.chenlin.dp.modules.cms.entity.TSelectEntity">
+		select t.name as text,t.id as value from t_channel t
+
+		where t.status=0 and t.del_flag=0 order by gmt_create desc limit 999
+
+	</select>
+
+
+
+
+	<select id="findByAccount" resultType="net.chenlin.dp.modules.cms.entity.TChannelEntity">
+		SELECT
+			`id`,
+			`account`,
+			`password`,
+			`name`,
+			company,
+			`contact`,
+			`phone`,
+			`position`,
+			`payment`,
+			`status`,
+			`channel_type`,
+			`pay_type`,
+			`settlement_type`,
+			`cooperation_type`,
+			`address`,
+			`content`,
+			`user_name`,
+			`gmt_create`,
+			`create_by`,
+			`gmt_modified`,
+			`update_by`,
+			`del_flag`
+		FROM
+			t_channel
+		WHERE
+			account = #{account}
+
+	</select>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TChannelEntity">
+		SELECT
+			`id`, 
+			`account`, 
+			`password`, 
+			`name`,
+			company,
+			`contact`, 
+			`phone`, 
+			`position`, 
+			`payment`, 
+			`status`, 
+			`channel_type`, 
+			`pay_type`, 
+			`settlement_type`, 
+			`cooperation_type`, 
+			`address`, 
+			`content`, 
+			`user_name`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_channel
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_channel
+	 	<set>
+			<if test="account != null">`account` = #{account}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="company != null">`company` = #{company}, </if>
+			<if test="contact != null">`contact` = #{contact}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="position != null">`position` = #{position}, </if>
+			<if test="payment != null">`payment` = #{payment}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="channelType != null">`channel_type` = #{channelType}, </if>
+			<if test="payType != null">`pay_type` = #{payType}, </if>
+			<if test="settlementType != null">`settlement_type` = #{settlementType}, </if>
+			<if test="cooperationType != null">`cooperation_type` = #{cooperationType}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = #{gmtModified}, </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_channel
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

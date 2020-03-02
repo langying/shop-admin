@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TAgentLogMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+		SELECT
+			a.`id`,
+			a.`agent_id`,
+			b.name as agentName,
+			c.name as channelName,
+			a.price,
+			a.cost,
+			a.`days`,
+			a.`pv`,
+			a.`uv`,
+			a.`register_num`,
+			a.`login_num`,
+			a.`first_login_num`,
+			a.`login_rate`,
+			a.`now_apply_num`,
+			a.`now_apply_pnum`,
+			a.`now_apply_rate`,
+			a.`apply_success_num`,
+			a.`average_apply_success_num`,
+			a.`average_register_apply_num`,
+			a.login_seven_num,
+			a.average_seven_apply_num,
+			a.average_now_apply_num,
+		    a.real_cost,
+		    a.discount,
+		    a.init_number,
+		    a.settle_number,
+			a.`gmt_create`
+		FROM
+			t_agent_log a left join t_channel_agent b on a.agent_id=b.id left join t_channel c on b.channel_id=c.id
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.days, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND (b.name LIKE concat('%',#{name},'%') or c.name like concat('%',#{name},'%'))
+			</if>
+		</where>
+		ORDER BY
+			id DESC
+	</select>
+
+	<select id="allList" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+SELECT
+    a.*,
+    COUNT(DISTINCT e.user_id) AS loginNum,
+    COUNT(DISTINCT e.user_id) AS loginSevenNum,
+    COUNT(DISTINCT e.user_id) AS firstLoginNum
+FROM (
+    SELECT
+        a.*,
+        COUNT(g.user_id) AS applySuccessNum
+    FROM (
+        SELECT
+            b.*,
+            COUNT(DISTINCT c.id)      AS registerNum,
+            COUNT(f.user_id)          AS nowApplyNum,
+            COUNT(DISTINCT f.user_id) AS nowApplyPnum
+        FROM (
+            SELECT
+                a.agent_id AS agentId,
+                b.price,
+                b.code,
+                b.name     AS agentName,
+                c.name     AS channelName,
+                b.discount,
+                b.init_number,
+                COUNT(a.id)            AS pv,
+                COUNT(DISTINCT a.ip_addr) AS uv
+            FROM
+                t_agent_record a
+                LEFT JOIN t_channel_agent b
+                    ON a.agent_id=b.id
+                LEFT JOIN t_channel c
+                    ON b.channel_id=c.id
+            WHERE
+                TO_DAYS(a.gmt_create)=TO_DAYS(NOW())
+            <if test="name != null and name.trim() != ''">
+                AND (b.name LIKE CONCAT('%', #{name}, '%') OR c.name LIKE CONCAT('%', #{name}, '%'))
+            </if>
+            GROUP BY a.agent_id
+            ) b
+            LEFT JOIN t_user c
+                ON b.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(NOW())
+            LEFT JOIN t_apply_record f
+                ON f.user_id=c.id AND TO_DAYS(f.gmt_create)=TO_DAYS(NOW())
+        GROUP BY b.agentId
+        ) a
+        LEFT JOIN t_user c
+            ON a.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(NOW())
+        LEFT JOIN t_product_apply g
+            ON g.user_id=c.id AND TO_DAYS(g.gmt_create)=TO_DAYS(NOW()) AND g.type=1
+    GROUP BY a.agentId
+    ) a
+    LEFT JOIN t_user c
+        ON a.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(NOW())
+    LEFT JOIN t_user_log e
+        ON e.user_id=c.id AND TO_DAYS(e.gmt_create)=TO_DAYS(NOW())
+GROUP BY a.agentId
+	</select>
+
+
+	<select id="list" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+		SELECT
+		a.`id`,
+		a.`agent_id`,
+		a.days,
+		b.name as agentName,
+		c.name as channelName,
+		a.`register_num`,
+		a.discount,
+		a.init_number,
+		a.settle_number,
+		a.`gmt_create`
+		FROM
+		t_agent_log a inner join t_channel_agent b on a.agent_id=b.id inner join t_channel c on b.channel_id=c.id
+		<where>
+			<if test="agentId!=null">
+				and a.agent_id=#{agentId}
+			</if>
+			<if test="channelId!=null">
+				and b.channel_id=#{channelId}
+			</if>
+			<if test="agentId==null and channelId==null">
+				and b.channel_id=-1
+			</if>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.days, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND b.name LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+
+		ORDER BY
+		id DESC
+	</select>
+
+
+	<select id="realList" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+		select b.price,b.code,b.name as agentName,a.name as channelName,count(c.id) as registerNum,b.discount,b.init_number
+		from 	 t_channel_agent b left join t_channel a on a.id=b.channel_id
+		left join t_user c on b.code=c.code
+
+		where TO_DAYS(c.gmt_create )=TO_DAYS(now())
+
+		<if test="agentId!=null">
+			and b.id=#{agentId}
+		</if>
+		<if test="channelId!=null">
+			and a.id=#{channelId}
+		</if>
+
+		group by b.id
+
+	</select>
+
+
+	<select id="recordList" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+SELECT
+    a.*,
+    COUNT(DISTINCT e.user_id) AS loginNum,
+    COUNT(DISTINCT e.user_id) AS loginSevenNum,
+    COUNT(DISTINCT e.user_id) AS firstLoginNum
+FROM (
+    SELECT
+        a.*,
+        COUNT(g.user_id) AS applySuccessNum
+    FROM (
+        SELECT
+            b.*,
+            COUNT(DISTINCT c.id)      AS registerNum,
+            COUNT(f.user_id)          AS nowApplyNum,
+            COUNT(DISTINCT f.user_id) AS nowApplyPnum
+        FROM (
+            SELECT
+                a.agent_id AS agentId,
+                b.price,
+                b.code,
+                b.name     AS agentName,
+                c.name     AS channelName,
+                b.discount,
+                b.init_number,
+                COUNT(a.id)            AS pv,
+                COUNT(DISTINCT a.ip_addr) AS uv
+            FROM
+                t_agent_record a
+                LEFT JOIN t_channel_agent b
+                    ON a.agent_id=b.id
+                LEFT JOIN t_channel c
+                    ON b.channel_id=c.id
+            WHERE
+                TO_DAYS(a.gmt_create)=TO_DAYS(#{days})
+            GROUP BY a.agent_id
+            ) b
+            LEFT JOIN t_user c
+                ON b.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(#{days})
+            LEFT JOIN t_apply_record f
+                ON f.user_id=c.id AND TO_DAYS(f.gmt_create)=TO_DAYS(#{days})
+        GROUP BY b.agentId
+        ) a
+        LEFT JOIN t_user c
+            ON a.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(#{days})
+        LEFT JOIN t_product_apply g
+            ON g.user_id=c.id AND TO_DAYS(g.gmt_create)=TO_DAYS(#{days}) AND g.type=1
+    GROUP BY a.agentId
+    ) a
+    LEFT JOIN t_user c
+        ON a.code=c.code  AND TO_DAYS(c.gmt_create)=TO_DAYS(#{days})
+    LEFT JOIN t_user_log e
+        ON e.user_id=c.id AND TO_DAYS(e.gmt_create)=TO_DAYS(#{days})
+GROUP BY a.agentId
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_agent_log (
+			`agent_id`, 
+			`days`,
+			 price,
+			 cost,
+			`pv`, 
+			`uv`, 
+			`register_num`, 
+			`login_num`, 
+			`first_login_num`, 
+			`login_rate`, 
+			`now_apply_num`, 
+			`now_apply_pnum`, 
+			`now_apply_rate`, 
+			`apply_success_num`, 
+			`average_apply_success_num`, 
+			`average_register_apply_num`,
+			login_seven_num,
+			average_seven_apply_num,
+			average_now_apply_num,
+			discount,
+			init_number,
+			settle_number,
+			real_cost,
+			`gmt_create`
+		)
+		VALUES (
+			#{agentId}, 
+			#{days},
+			#{price},
+			#{cost},
+			#{pv}, 
+			#{uv}, 
+			#{registerNum}, 
+			#{loginNum}, 
+			#{firstLoginNum}, 
+			#{loginRate}, 
+			#{nowApplyNum}, 
+			#{nowApplyPnum}, 
+			#{nowApplyRate}, 
+			#{applySuccessNum}, 
+			#{averageApplySuccessNum}, 
+			#{averageRegisterApplyNum},
+			#{loginSevenNum},
+			#{averageSevenApplyNum},
+			#{averageNowApplyNum},
+			#{discount},
+			#{initNumber},
+			#{settleNumber},
+			#{realCost},
+			now()
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TAgentLogEntity">
+		SELECT
+			`id`, 
+			`agent_id`, 
+			`days`,
+			 price,
+			 cost,
+			`pv`, 
+			`uv`, 
+			`register_num`, 
+			`login_num`, 
+			`first_login_num`,
+			`login_rate`, 
+			`now_apply_num`, 
+			`now_apply_pnum`, 
+			`now_apply_rate`, 
+			`apply_success_num`, 
+			`average_apply_success_num`, 
+			`average_register_apply_num`,
+			 login_seven_num,
+			average_seven_apply_num,
+			average_now_apply_num,
+			discount,
+			init_number,
+			settle_number,
+			real_cost,
+			`gmt_create`
+		FROM
+			t_agent_log
+		WHERE
+			id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE t_agent_log
+	 	<set>
+			<if test="agentId != null">`agent_id` = #{agentId}, </if>
+			<if test="days != null">`days` = #{days}, </if>
+			<if test="pv != null">`pv` = #{pv}, </if>
+			<if test="uv != null">`uv` = #{uv}, </if>
+			<if test="registerNum != null">`register_num` = #{registerNum}, </if>
+			<if test="loginNum != null">`login_num` = #{loginNum}, </if>
+			<if test="firstLoginNum != null">`first_login_num` = #{firstLoginNum}, </if>
+			<if test="loginRate != null">`login_rate` = #{loginRate}, </if>
+			<if test="nowApplyNum != null">`now_apply_num` = #{nowApplyNum}, </if>
+			<if test="nowApplyPnum != null">`now_apply_pnum` = #{nowApplyPnum}, </if>
+			<if test="nowApplyRate != null">`now_apply_rate` = #{nowApplyRate}, </if>
+			<if test="applySuccessNum != null">`apply_success_num` = #{applySuccessNum}, </if>
+			<if test="averageApplySuccessNum != null">`average_apply_success_num` = #{averageApplySuccessNum}, </if>
+			<if test="averageRegisterApplyNum != null">`average_register_apply_num` = #{averageRegisterApplyNum}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}</if>
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_agent_log
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

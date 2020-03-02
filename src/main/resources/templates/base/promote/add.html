@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('首页推荐位表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+	            <td class="formTitle">名称<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="名称" v-model="tPromote.name" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+			<tr>
+	            <td class="formTitle">描述<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="描述" v-model="tPromote.describe" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+			<tr>
+				<td class="formTitle">封面<font face="宋体">*</font></td>
+				<td class="formValue">
+					<img src="" id="img_src" style="width: 50px;height: 50px">
+					<input type="file" name="file" id="cover" style="display: none;" @change="uploadCover">
+					<input type="button" class="btn btn-default btn-sm" value="上传封面" @click="selectCover">
+				</td>
+        	</tr>
+
+			<tr>
+				<td class="formTitle">类型<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.rateUnit" isvalid="yes" checkexpession="NotNull">-->
+
+					<select v-model="tPromote.type" class="form-control" >
+						<option v-for="type in types" v-bind:value="type.value">
+							{{ type.text }}
+						</option>
+					</select>
+				</td>
+        	</tr>
+
+
+			<tr v-if="tPromote.type == 2">
+
+				<td class="formTitle">选择栏目<font face="宋体">*</font></td>
+				<td class="formValue" >
+					<select v-model="tPromote.columnId" class="form-control">
+
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+				</td>
+
+        	</tr>
+
+			<tr v-if="tPromote.type == 3">
+
+				<td class="formTitle">平台产品<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="产品id" v-model="tThird.productId" isvalid="yes" checkexpession="NotNull">-->
+
+
+					<select v-model="tPromote.productId" class="form-control" >
+						<option v-for="option in products" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+				</td>
+        	</tr>
+			<tr>
+	            <td class="formTitle">排序<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="越小越前面" v-model="tPromote.orderNum" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/promote/add.js}"></script>
+	<script th:src="@{/js/ajaxfileupload.js}"></script>
+</body>
+</html>

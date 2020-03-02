@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('产品表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr >
+	            <td class="formTitle">产品名称<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text"  placeholder="" v-model="tProduct.name" isvalid="yes" checkexpession="NotNull">
+	            </td>
+
+				<td class="formTitle">单价<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="" v-model="tProduct.price" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+				<td class="formTitle">logo<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="logo地址" v-model="tProduct.logoUrl" isvalid="yes" checkexpession="NotNull">-->
+					<img src="" id="img_src" style="width: 50px;height: 50px">
+					<input type="file" name="file" id="cover" style="display: none;" @change="uploadCover">
+					<input type="button" class="btn btn-default btn-sm" value="上传封面" @click="selectCover">
+				</td>
+
+
+        	</tr>
+			<tr>
+				<td class="formTitle">选择商户<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.rateUnit" isvalid="yes" checkexpession="NotNull">-->
+
+					<select v-model="tProduct.merchantsId"  >
+						<option v-for="datas in merchants" v-bind:value="datas.value">
+							{{ datas.text }}
+						</option>
+					</select>
+				</td>
+				<td class="formTitle">推广链接<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="http://" v-model="tProduct.linkUrl" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">主推与否<font face="宋体">*</font></td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="recommendFlag" value="0" v-model="tProduct.recommendFlag"/> 否
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="recommendFlag" value="1" v-model="tProduct.recommendFlag"/> 是
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">选择栏目<font face="宋体">*</font></td>
+				<td class="formValue" colspan="5">
+
+					<!--<select v-model="tProduct.columns"  >
+
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>-->
+
+					<label  v-for="option in options" style="padding: 0 10px;font-size: 15px;">
+						<input style="width: 18px;height: 18px;vertical-align: -3px;" type="checkbox"  v-bind:value="option.value" v-model="tProduct.columns"/> {{ option.text }}
+					</label>
+
+
+
+				</td>
+
+
+			</tr>
+
+			<tr >
+	            <td class="formTitle">最低贷款金额<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text"  placeholder="最低(元)" v-model="tProduct.loanAmountMin"  isvalid="yes" checkexpession="NotNull">
+	            </td>
+				<td class="formTitle">贷款金额最高<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" placeholder="最高(元)" v-model="tProduct.loanAmountMax"   isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">贷款利率(%）<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="" v-model="tProduct.rateScope" isvalid="yes" checkexpession="NotNull">
+				</td>
+        	</tr>
+			<tr >
+
+				<td class="formTitle">利率单位<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.rateUnit" isvalid="yes" checkexpession="NotNull">-->
+
+					<select v-model="tProduct.rateUnit"  >
+						<option v-for="rateUnit in rateUnits" v-bind:value="rateUnit.value">
+							{{ rateUnit.text }}
+						</option>
+					</select>
+				</td>
+				<td class="formTitle">借款单位<font face="宋体">*</font></td>
+
+				<td class="formValue" colspan="1">
+					<!--<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="1" v-model="tProduct.borrowUnit"/> 天
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="2" v-model="tProduct.borrowUnit"/> 月
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="3" v-model="tProduct.borrowUnit"/> 年
+					</label>-->
+					<select v-model="tProduct.borrowUnit"  >
+						<option v-for="borrowUnit in borrowUnits" v-bind:value="borrowUnit.value">
+							{{ borrowUnit.text }}
+						</option>
+					</select>
+				</td>
+				<td class="formTitle">秒批与否<font face="宋体">*</font></td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="hotFlag" value="0" v-model="tProduct.hotFlag"/> 否
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="hotFlag" value="1" v-model="tProduct.hotFlag"/> 是
+					</label>
+				</td>
+
+
+			</tr>
+			<tr >
+				<td class="formTitle">最低借款期限<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="" v-model="tProduct.borrowMin" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">最高借款期限<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="" v-model="tProduct.borrowMax" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">产品文案<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.featuresData" isvalid="yes" checkexpession="NotNull">-->
+
+					<input  type="text"  placeholder="" v-model="tProduct.describe" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+
+			<tr >
+				<td class="formTitle">申请条件<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.applyData" isvalid="yes" checkexpession="NotNull">-->
+
+					<textarea   style="height: 80px;" v-model="tProduct.applyData" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+				<td class="formTitle">产品介绍<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="" v-model="tProduct.featuresData" isvalid="yes" checkexpession="NotNull">-->
+
+					<textarea   style="height: 80px;" v-model="tProduct.introduce" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+				<td class="formTitle">产品后台<font face="宋体">*</font></td>
+				<td class="formValue">
+					<textarea   style="height: 80px;" v-model="tProduct.content" isvalid="yes" checkexpession="NotNull"></textarea>
+				</td>
+
+			</tr>
+			<tr>
+				<td class="formTitle">主推排序值<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="1-999" v-model="tProduct.orderNum" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">贷款排序值<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="1-999" v-model="tProduct.sortNum" isvalid="yes" checkexpession="NotNull">
+				</td>
+				<td class="formTitle">能借到排序值<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"  placeholder="1-999" v-model="tProduct.lendNum" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+			</tr>
+			<tr>
+
+				<td class="formTitle">合作模式<font face="宋体">*</font></td>
+
+				<td class="formValue" colspan="1">
+					<!--<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="1" v-model="tProduct.borrowUnit"/> 天
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="2" v-model="tProduct.borrowUnit"/> 月
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="borrowUnit" value="3" v-model="tProduct.borrowUnit"/> 年
+					</label>-->
+					<select v-model="tProduct.cooperationType"  >
+						<option v-for="cooperation in cooperations" v-bind:value="cooperation.value">
+							{{ cooperation.text }}
+						</option>
+					</select>
+				</td>
+				<td class="formTitle">申请人数<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text"   v-model="tProduct.applyTotal" isvalid="yes" checkexpession="NotNull">
+				</td>
+
+				<td class="formTitle">状态</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="status" value="0" v-model="tProduct.status"/> 上线
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="status" value="1" v-model="tProduct.status"/> 下线
+					</label>
+				</td>
+
+			</tr>
+
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/product/add.js}"></script>
+	<script th:src="@{/js/ajaxfileupload.js}"></script>
+</body>
+</html>

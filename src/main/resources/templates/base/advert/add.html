@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('banner表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+	            <td class="formTitle">标题<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="" v-model="tAdvert.title" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+			<tr>
+	            <td class="formTitle">封面<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<!--isvalid="yes" checkexpession="NotNull"-->
+					<img src="" id="img_src" style="width: 50px;height: 50px">
+					<input type="file" name="file" id="cover" style="display: none;" @change="uploadCover">
+					<input type="button" class="btn btn-default btn-sm" value="上传封面" @click="selectCover">
+	            </td>
+        	</tr>
+			<tr>
+				<td class="formTitle">跳转类型：</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="type" value="2" v-model="tAdvert.type"/> 推广链接
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="type"  value="1" v-model="tAdvert.type"/> 平台产品
+					</label>
+
+				</td>
+			</tr>
+
+			<tr v-if="tAdvert.type == 1">
+	            <td class="formTitle">平台产品<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<!--<input type="text" class="form-control" placeholder="产品id" v-model="" isvalid="yes" checkexpession="NotNull">-->
+					<select v-model="tAdvert.productId" class="form-control" >
+						<option v-for="option in options" v-bind:value="option.value">
+							{{ option.text }}
+						</option>
+					</select>
+
+	            </td>
+        	</tr>
+
+			<tr v-if="tAdvert.type == 2">
+	            <td class="formTitle">推广链接<font face="宋体">*</font></td>
+	            <td class="formValue">
+					<input type="text" class="form-control" placeholder="http://" v-model="tAdvert.linkUrl" isvalid="yes" checkexpession="NotNull">
+	            </td>
+        	</tr>
+			<tr>
+				<td class="formTitle">状态</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="status" value="0" v-model="tAdvert.status"/> 上线
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="status" value="1" v-model="tAdvert.status"/> 下线
+					</label>
+				</td>
+			</tr>
+
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/advert/add.js}"></script>
+	<script th:src="@{/js/ajaxfileupload.js}"></script>
+</body>
+</html>

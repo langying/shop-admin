@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.chenlin.dp.modules.cms.dao.TProductMapper">
+	
+	<select id="listForPage" resultType="net.chenlin.dp.modules.cms.entity.TProductEntity">
+		SELECT
+			a.`id`,
+			a.`name`,
+			a.`logo_url`,
+			a.`loan_amount_min`,
+			a.`loan_amount_max`,
+			a.`pay_time`,
+			a.`type`,
+			a.`recommend_flag`,
+		    a.cooperation_type,
+		    a.hot_flag,
+			a.`apply_data`,
+			a.`features_data`,
+			a.`rate_scope`,
+			a.`rate_unit`,
+			a.`borrow_min`,
+			a.`borrow_max`,
+			a.`borrow_unit`,
+			a.`score`,
+			a.`status`,
+			a.`order_num`,
+			a.`link_url`,
+			a.`apply_total`,
+			a.`gmt_create`,
+			a.`create_by`,
+			a.`gmt_modified`,
+			a.`update_by`,
+			a.`del_flag`,
+			a.introduce,
+			a.describe,
+			a.price,
+			a.content,
+			a.sort_num,
+		    a.lend_num,
+			CONCAT(loan_amount_min,'-',loan_amount_max) as loan_amount,
+			CONCAT(borrow_min,'-',borrow_max) as borrow,
+			CONCAT(if(labelg=1,'高',''),'',if(labelk=1,'快',''),'',if(labelx=1,'新','')) as labels,
+			CONCAT(rate_scope,'(',rate_unit,'利率)') as rate,
+			b.name as merchantsName
+		FROM
+			t_product a left join t_merchants b on a.merchants_id=b.id
+
+		<where>
+			<if test=" startDate != null and startDate != '' and endDate != null and endDate != '' ">
+				AND DATE_FORMAT( a.gmt_create, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+			</if>
+			<if test="name != null and name.trim() != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+		</where>
+		ORDER BY
+			a.status,a.order_num
+	</select>
+	
+	<insert id="save">
+		INSERT INTO t_product (
+			`name`, 
+			`logo_url`, 
+			`loan_amount_min`, 
+			`loan_amount_max`, 
+			`pay_time`, 
+			`type`, 
+			`recommend_flag`,
+			cooperation_type,
+			hot_flag,
+			`apply_data`, 
+			`features_data`, 
+			`rate_scope`, 
+			`rate_unit`, 
+			`borrow_min`, 
+			`borrow_max`, 
+			`borrow_unit`,
+			`labelg`,
+			`labelk`,
+			`labelx`,
+			`score`, 
+			`status`, 
+			`order_num`,
+			`introduce`,
+			`describe`,
+			 price,
+			 content,
+			 sort_num,
+			 lend_num,
+			 merchants_id,
+			`columns`,
+			`link_url`, 
+			`apply_total`, 
+			`gmt_create`, 
+			`create_by`,
+			`del_flag`
+		)
+		VALUES (
+			#{name}, 
+			#{logoUrl}, 
+			#{loanAmountMin}, 
+			#{loanAmountMax}, 
+			#{payTime}, 
+			#{type}, 
+			#{recommendFlag},
+			#{cooperationType},
+			#{hotFlag},
+			#{applyData}, 
+			#{featuresData}, 
+			#{rateScope}, 
+			#{rateUnit}, 
+			#{borrowMin}, 
+			#{borrowMax}, 
+			#{borrowUnit}, 
+			#{labelG},
+			#{labelK},
+			#{labelX},
+			#{score}, 
+			#{status}, 
+			#{orderNum},
+			#{introduce},
+			#{describe},
+			#{price},
+			#{content},
+			#{sortNum},
+			#{lendNum},
+			#{merchantsId},
+			#{columns},
+			#{linkUrl}, 
+			#{applyTotal}, 
+			now(),
+			#{createBy},
+			#{delFlag}
+		)
+	</insert>
+	
+	<select id="getObjectById" resultType="net.chenlin.dp.modules.cms.entity.TProductEntity">
+		SELECT
+			`id`, 
+			`name`, 
+			`logo_url`, 
+			`loan_amount_min`, 
+			`loan_amount_max`, 
+			`pay_time`, 
+			`type`, 
+			`recommend_flag`,
+			cooperation_type,
+			hot_flag,
+			`apply_data`, 
+			`features_data`, 
+			`rate_scope`, 
+			`rate_unit`, 
+			`borrow_min`, 
+			`borrow_max`, 
+			`borrow_unit`, 
+			`labelg`,
+			`labelk`,
+			`labelx`,
+			`score`, 
+			`status`, 
+			`order_num`,
+			`introduce`,
+			`describe`,
+			 price,
+			 content,
+			 sort_num,
+			 lend_num,
+			 merchants_id,
+			`columns`,
+			`link_url`, 
+			`apply_total`, 
+			`gmt_create`, 
+			`create_by`, 
+			`gmt_modified`, 
+			`update_by`, 
+			`del_flag`
+		FROM
+			t_product
+		WHERE
+			id = #{id}
+	</select>
+
+
+	<select id="selectAll" resultType="net.chenlin.dp.modules.cms.entity.TSelectEntity">
+		select t.name as text,t.id as value from t_product t
+
+		where t.status=0 and t.del_flag=0 order by gmt_create desc limit 999
+
+
+	</select>
+	
+	<update id="update">
+		UPDATE t_product
+	 	<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="logoUrl != null">`logo_url` = #{logoUrl}, </if>
+			<if test="loanAmountMin != null">`loan_amount_min` = #{loanAmountMin}, </if>
+			<if test="loanAmountMax != null">`loan_amount_max` = #{loanAmountMax}, </if>
+			<if test="payTime != null">`pay_time` = #{payTime}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="recommendFlag != null">`recommend_flag` = #{recommendFlag}, </if>
+			<if test="cooperationType !=null ">cooperation_type=#{cooperationType}, </if>
+			<if test="hotFlag != null">`hot_flag` = #{hotFlag}, </if>
+			<if test="applyData != null">`apply_data` = #{applyData}, </if>
+			<if test="featuresData != null">`features_data` = #{featuresData}, </if>
+			<if test="rateScope != null">`rate_scope` = #{rateScope}, </if>
+			<if test="rateUnit != null">`rate_unit` = #{rateUnit}, </if>
+			<if test="borrowMin != null">`borrow_min` = #{borrowMin}, </if>
+			<if test="borrowMax != null">`borrow_max` = #{borrowMax}, </if>
+			<if test="borrowUnit != null">`borrow_unit` = #{borrowUnit}, </if>
+			<if test="labelG != null">`labelg` = #{labelG}, </if>
+			<if test="labelK != null">`labelk` = #{labelK}, </if>
+			<if test="labelX != null">`labelx` = #{labelX}, </if>
+			<if test="score != null">`score` = #{score}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}, </if>
+			<if test="introduce != null">`introduce` = #{introduce}, </if>
+			<if test="describe != null">`describe` = #{describe}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="sortNum != null">`sort_num` = #{sortNum}, </if>
+			<if test="lendNum != null">`lend_num` = #{lendNum}, </if>
+			<if test="merchantsId != null">`merchants_id` = #{merchantsId}, </if>
+			<if test="columns != null">`columns` = #{columns}, </if>
+			<if test="linkUrl != null">`link_url` = #{linkUrl}, </if>
+			<if test="applyTotal != null">`apply_total` = #{applyTotal}, </if>
+			<if test="gmtCreate != null">`gmt_create` = #{gmtCreate}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="gmtModified != null">`gmt_modified` = now(), </if>
+			<if test="updateBy != null">`update_by` = #{updateBy}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}</if>
+
+		</set>
+		WHERE
+			id = #{id}
+	</update>
+	
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			t_product
+		WHERE
+			id IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

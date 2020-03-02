@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/header_css::header('产品栏目表')"></head>
+<body>
+	<div id="dpLTE" class="container-fluid" v-cloak>
+		<table class="form" id="form">
+			<tr>
+				<td class="formTitle">栏目名称<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="栏目名称" v-model="tColumn.name" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">封面<font face="宋体">*</font></td>
+				<td class="formValue">
+					<!--isvalid="yes" checkexpession="NotNull"-->
+					<img src="" id="img_src" style="width: 50px;height: 50px">
+					<input type="file" name="file" id="cover" style="display: none;" @change="uploadCover">
+					<input type="button" class="btn btn-default btn-sm" value="上传封面" @click="selectCover">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">栏目文案<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="栏目文案" v-model="tColumn.describe" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">金额范围<font face="宋体">*</font></td>
+				<td class="formValue">
+					<input type="text" class="form-control" placeholder="金额范围" v-model="tColumn.amountScope" isvalid="yes" checkexpession="NotNull">
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">状态</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="status" value="0" v-model="tColumn.status"/> 上线
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="status" value="1" v-model="tColumn.status"/> 下线
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="formTitle">是否主推</td>
+				<td class="formValue" colspan="1">
+					<label class="radio-inline">
+						<input type="radio" name="type" value="0" v-model="tColumn.type"/> 不推荐
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="type" value="1" v-model="tColumn.type"/> 推荐
+					</label>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div th:include="include/footer_js::footer"></div>
+	<script th:src="@{/js/base/column/edit.js}"></script>
+	<script th:src="@{/js/ajaxfileupload.js}"></script>
+</body>
+</html>
